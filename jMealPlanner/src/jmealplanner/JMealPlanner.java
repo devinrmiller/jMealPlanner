@@ -5,18 +5,32 @@
  */
 package jmealplanner;
 
+import java.sql.Connection;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import oracle.jdbc.OraclePreparedStatement;
+import oracle.jdbc.OracleResultSet;
+
 /**
  *
  * @author devin
  */
+
+
 public class JMealPlanner {
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    
+    static ArrayList<Food> fridge; 
+    static ArrayList<Food> foodList; 
+    
+    public static void main(String[] args) 
+    {
         FrontEnd fe = new FrontEnd();
         fe.setVisible(true);
+        
     }
     
 }

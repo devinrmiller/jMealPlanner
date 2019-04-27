@@ -11,7 +11,7 @@ create table Recipe(
 	servingsTotal number not null,
 	servingsRemain number not null,
 	constraint servingsTotal check (servingsTotal >= 1),										--Must make at least 1 serving
-	constaint servingsRemain check (servingsRemain >= 0)										--Cannot have negative servings remaining
+	constraint servingsRemain check (servingsRemain >= 0)										--Cannot have negative servings remaining
 );
 
 create table Food(
@@ -22,13 +22,13 @@ create table Food(
 	protein number not null,
 	fat number not null,
 	name varchar2(30) not null,
-	quantity number not null,													--quantity on hand
-	quantityMeasurement char(20) not null,												--oz, grams, lbs, etc.
+	quantity number not null,																	--quantity on hand
+	quantityMeasurement char(20) not null														--oz, grams, lbs, etc.
 );																							
 
 create table MealPlan(
 	dayOfWeek char(2) primary key,
-	breakfast char(10) not null,													--breakfast, lunch and dinner refernce a recipe ID
+	breakfast char(10) not null,																--breakfast, lunch and dinner refernce a recipe ID
 	lunch char(10) not null,
 	dinner char(10) not null,
 	constraint fk_breakfast foreign key (breakfast) references Recipe(recID),
@@ -39,7 +39,7 @@ create table MealPlan(
 create table Ingredients(
 	recID char(10),
 	foodID char(10),
-	quantity number not null,													--quantity on needed
+	quantity number not null,																	--quantity on needed
 	quantityMeasurement char(20) not null,														
 	constraint fk_recipe_recID foreign key (recID) references Recipe(recID),
 	constraint fk_food_foodID foreign key (foodID) references Food(foodID)
@@ -95,6 +95,7 @@ insert into Ingredients values ('3', '10', 3, 'oz');
 insert into Ingredients values ('3', '12', .5, 'oz');
 
 
+commit;
 
 --testing 
 --select * from Recipe;
