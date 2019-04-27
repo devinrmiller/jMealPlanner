@@ -15,7 +15,8 @@ public class JMealPlanner {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        FrontEnd fe = new FrontEnd();
+        fe.setVisible(true);
     }
     
 }
