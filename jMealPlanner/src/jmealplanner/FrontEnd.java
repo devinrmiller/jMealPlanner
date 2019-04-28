@@ -26,6 +26,7 @@ public class FrontEnd extends JFrame {
     //custom variables
     static ArrayList<Food> fridge; 
     static ArrayList<Food> foodList; 
+    static ArrayList<Recipe> recipeList;
     
     /**
      * Creates new form FrontEnd
@@ -36,6 +37,7 @@ public class FrontEnd extends JFrame {
         //initial data load
         fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
         foodList = Food.initilizeFoodList(5);                   //contains list of objects of all foods in database. including negative values
+        recipeList = Recipe.initilizeRecipeList();
         
         //initially load JLists with data from database
         populateFridge();
