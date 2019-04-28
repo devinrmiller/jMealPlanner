@@ -34,6 +34,7 @@ public class FrontEnd extends JFrame {
     
     public FrontEnd() {
         initComponents();
+        
         //initial data load
         fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
         foodList = Food.initilizeFoodList(5);                   //contains list of objects of all foods in database. including negative values
@@ -86,13 +87,18 @@ public class FrontEnd extends JFrame {
                             //succeed. remove item from JList as well
                             JOptionPane.showMessageDialog(getParent(), "Food Deleted Successfully!");
                             model.removeElementAt(index);
+
+                            //repopulate JList using existing query rather than
+                            //creating new one to get the ID of newly entered food
+                            //and creating an object to add
+                            fridge = Food.initilizeFoodList(0);
+                            foodList = Food.initilizeFoodList(5);
+
+                            populateFridge();
+                            populateFoodDict();
                         }
                     }
                 }
-                
-                //update lists with similar data
-                jList3.setModel(model);
-                jList4.setModel(model);
             }
         });
         
@@ -211,13 +217,21 @@ public class FrontEnd extends JFrame {
                             //succeed. remove item from JList as well
                             JOptionPane.showMessageDialog(getParent(), "Food Deleted Successfully!");
                             model.removeElementAt(index);
+
+                            //repopulate JList using existing query rather than
+                            //creating new one to get the ID of newly entered food
+                            //and creating an object to add
+                            fridge = Food.initilizeFoodList(0);
+                            foodList = Food.initilizeFoodList(5);
+
+                            populateFridge();
+                            populateFoodDict();
                         }
                     }
+                    
+                    
                 }
                 
-                //update lists with similar data
-                jList3.setModel(model);
-                jList4.setModel(model);
             }
         });
         

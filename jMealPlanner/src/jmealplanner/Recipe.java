@@ -129,7 +129,7 @@ public class Recipe {
             sqlStatement = "select Ingredients.recID,recipe.name, category, servingsTotal, sum((calories * Ingredients.quantity))as cals , sum(carbs * Ingredients.quantity) as carbs, sum(protein * Ingredients.quantity) as prot, sum(fat * Ingredients.quantity) as fat\n"
                     + "from Ingredients, Food, recipe\n"
                     + "where Ingredients.foodID = Food.foodID and recipe.recID = Ingredients.recID\n"
-                    + "group by Ingredients.recID,category, servingsTotal,recipe.name;";
+                    + "group by Ingredients.recID,category, servingsTotal,recipe.name";
             
             pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
 
