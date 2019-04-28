@@ -231,5 +231,51 @@ public class Food {
         
         return outcome;
     }
+    
+    public static int insertFood(String[] insertFood)
+    {
+        //initilize connection variables
+        //outcome is used rather than return in catch so that the connection is still
+        //closed by allowing the try to reach finally
+        String sqlStatement = "";
+        int outcome = 1;
+
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "insert into Food (groupType, calories, carbs, protein, fat, name, quantity, quantityMeasurement) values (?, ?, ?, ?, ?, ?, ?, ?)";
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
+            pst.setString(1, String.valueOf(insertFood[1]));                         //groupType               
+            pst.setInt(2, Integer.valueOf(insertFood[2]));                           //calories
+            pst.setInt(3, Integer.valueOf(insertFood[3]));                           //carbs
+            pst.setInt(4, Integer.valueOf(insertFood[4]));                           //protein
+            pst.setInt(5, Integer.valueOf(insertFood[5]));                           //fat
+            pst.setString(6, String.valueOf(insertFood[0]));                         //name
+            pst.setInt(7, Integer.valueOf(insertFood[6]));                           //quantity
+            pst.setString(8, String.valueOf(insertFood[7]));                         //quantityMeasurement
+
+            //execute the query
+            rs = (OracleResultSet) pst.executeQuery();
+            if(rs.next() == false)
+            {
+                outcome = 0;
+            }
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+        
+        return outcome;
+    }
    
 }

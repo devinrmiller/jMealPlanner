@@ -19,9 +19,6 @@ public class JMealPlanner {
      * @param args the command line arguments
      */
     
-    static ArrayList<Food> fridge; 
-    static ArrayList<Food> foodList; 
-    
     public static void main(String[] args) 
     {
         FrontEnd fe = new FrontEnd();

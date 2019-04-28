@@ -37,11 +37,14 @@ public class FrontEnd extends JFrame {
         fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
         foodList = Food.initilizeFoodList(5);                   //contains list of objects of all foods in database. including negative values
         
+        //initially load JLists with data from database
         populateFridge();
         populateFoodDict();
         
         /*
+        *
         *   Fridge Tab Button Listeners
+        *
         */
         // the - button (delete)
         jButton6.addActionListener(new ActionListener(){
@@ -70,7 +73,73 @@ public class FrontEnd extends JFrame {
                         //call our delete function/query
                         //use confirmation to check if succeeded
                         confirmation = Food.deleteFood(item.getFoodID());
+                        //check if succeeded or failed
+                        if (confirmation == 0) 
+                        {
+                            //fail
+                            JOptionPane.showMessageDialog(getParent(), "Something went wrong  ):");
+                        } 
+                        else if (confirmation == 1) 
+                        {
+                            //succeed. remove item from JList as well
+                            JOptionPane.showMessageDialog(getParent(), "Food Deleted Successfully!");
+                            model.removeElementAt(index);
+                        }
                     }
+                }
+                
+                //update lists with similar data
+                jList3.setModel(model);
+                jList4.setModel(model);
+            }
+        });
+        
+        //the + button (add/insert)
+        jButton5.addActionListener(new ActionListener(){
+            
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //variable declaration
+                JTextField foodName = new JTextField();
+                JTextField foodGroup = new JTextField();
+                JTextField foodCalories = new JTextField();
+                JTextField foodCarbs = new JTextField();
+                JTextField foodProtein = new JTextField();
+                JTextField foodFat = new JTextField();
+                JTextField foodQuant = new JTextField();
+                JTextField foodQuantMeasure = new JTextField();
+                
+                Object[] foodInfo ={
+                    "Name: ", foodName,
+                    "Food Group: ", foodGroup,
+                    "Calories: ", foodCalories,
+                    "Carbs: ", foodCarbs,
+                    "Protein: ", foodProtein,
+                    "Fat: ", foodFat,
+                    "Quantity: ", foodQuant,
+                    "Measurement Type (oz, Fl.oz, etc.): ", foodQuantMeasure
+                };
+
+                //create a new pane to be displayed
+                int option = JOptionPane.showConfirmDialog(getParent(), foodInfo, "Enter Information for new Food", JOptionPane.OK_CANCEL_OPTION);
+                if(option == JOptionPane.OK_OPTION)
+                {
+                    //get entered values
+                    String value1 = foodName.getText();
+                    String value2 = foodGroup.getText();
+                    String value3 = foodCalories.getText();
+                    String value4 = foodCarbs.getText();
+                    String value5 = foodProtein.getText();
+                    String value6 = foodFat.getText();
+                    String value7 = foodQuant.getText();
+                    String value8 = foodQuantMeasure.getText();
+                    
+                    //store values in array
+                    String toInsert[] = {value1, value2, value3, value4, value5, value6, value7, value8};
+                    
+                    //call our function to insert the newly entered food
+                    int confirmation = Food.insertFood(toInsert);
+                    
                     //check if succeeded or failed
                     if (confirmation == 0) 
                     {
@@ -79,15 +148,19 @@ public class FrontEnd extends JFrame {
                     } 
                     else if (confirmation == 1) 
                     {
-                        //succeed. remove item from JList as well
-                        JOptionPane.showMessageDialog(getParent(), "Food Deleted Successfully!");
-                        model.removeElementAt(index);
+                        //succeed. 
+                        JOptionPane.showMessageDialog(getParent(), "Food Added Successfully!");
+                        
+                        //repopulate JList using existing query rather than
+                        //creating new one to get the ID of newly entered food
+                        //and creating an object to add
+                        fridge = Food.initilizeFoodList(0);                     
+                        foodList = Food.initilizeFoodList(5);
+                        
+                        populateFridge();
+                        populateFoodDict();
                     }
                 }
-                
-                //update lists with similar data
-                jList3.setModel(model);
-                jList4.setModel(model);
             }
         });
         
@@ -124,7 +197,70 @@ public class FrontEnd extends JFrame {
                         //call our delete function/query
                         //use confirmation to check if succeeded
                         confirmation = Food.deleteFood(item.getFoodID());
+
+                        //check if succeeded or failed
+                        if (confirmation == 0) 
+                        {
+                            //fail
+                            JOptionPane.showMessageDialog(getParent(), "Something went wrong  ):");
+                        } 
+                        else if (confirmation == 1) 
+                        {
+                            //succeed. remove item from JList as well
+                            JOptionPane.showMessageDialog(getParent(), "Food Deleted Successfully!");
+                            model.removeElementAt(index);
+                        }
                     }
+                }
+                
+                //update lists with similar data
+                jList3.setModel(model);
+                jList4.setModel(model);
+            }
+        });
+        
+        //the + button (add/insert)
+        jButton7.addActionListener(new ActionListener(){
+            
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //variable declaration
+                JTextField foodName = new JTextField();
+                JTextField foodGroup = new JTextField();
+                JTextField foodCalories = new JTextField();
+                JTextField foodCarbs = new JTextField();
+                JTextField foodProtein = new JTextField();
+                JTextField foodFat = new JTextField();
+                JTextField foodQuant = new JTextField();
+                JTextField foodQuantMeasure = new JTextField();
+                
+                Object[] foodInfo ={
+                    "Name: ", foodName,
+                    "Food Group: ", foodGroup,
+                    "Calories: ", foodCalories,
+                    "Carbs: ", foodCarbs,
+                    "Protein: ", foodProtein,
+                    "Fat: ", foodFat,
+                    "Quantity: ", foodQuant,
+                    "Measurement Type (oz, Fl.oz, etc.): ", foodQuantMeasure
+                };
+
+                int option = JOptionPane.showConfirmDialog(getParent(), foodInfo, "Enter Information for new Food", JOptionPane.OK_CANCEL_OPTION);
+                if(option == JOptionPane.OK_OPTION)
+                {
+                    String value1 = foodName.getText();
+                    String value2 = foodGroup.getText();
+                    String value3 = foodCalories.getText();
+                    String value4 = foodCarbs.getText();
+                    String value5 = foodProtein.getText();
+                    String value6 = foodFat.getText();
+                    String value7 = foodQuant.getText();
+                    String value8 = foodQuantMeasure.getText();
+                    
+                    String toInsert[] = {value1, value2, value3, value4, value5, value6, value7, value8};
+                    
+                    int confirmation = Food.insertFood(toInsert);
+                    
                     //check if succeeded or failed
                     if (confirmation == 0) 
                     {
@@ -133,15 +269,19 @@ public class FrontEnd extends JFrame {
                     } 
                     else if (confirmation == 1) 
                     {
-                        //succeed. remove item from JList as well
-                        JOptionPane.showMessageDialog(getParent(), "Food Deleted Successfully!");
-                        model.removeElementAt(index);
+                        //succeed. 
+                        JOptionPane.showMessageDialog(getParent(), "Food Added Successfully!");
+                        
+                        //repopulate JList using existing query rather than
+                        //creating new one to get the ID of newly entered food
+                        //and creating an object to add
+                        fridge = Food.initilizeFoodList(0);                     
+                        foodList = Food.initilizeFoodList(5);
+                        
+                        populateFridge();
+                        populateFoodDict();
                     }
                 }
-                
-                //update lists with similar data
-                jList3.setModel(model);
-                jList4.setModel(model);
             }
         });
     }
