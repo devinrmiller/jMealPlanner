@@ -189,5 +189,47 @@ public class Food {
         
         return foodList;
     }
+    
+    //delete a food from the database, as well as list.
+    //0 = fail
+    //1 = success
+    public static int deleteFood(String passedID) 
+    {
+        //initilize connection variables
+        //outcome is used rather than return in catch so that the connection is still
+        //closed by allowing the try to reach finally
+        String sqlStatement = "";
+        int outcome = 1;
+
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "delete from food where foodID = ?";
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
+            pst.setInt(1, Integer.valueOf(passedID));
+
+            //execute the query
+            rs = (OracleResultSet) pst.executeQuery();
+            if(rs.next() == false)
+            {
+                outcome = 0;
+            }
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+        
+        return outcome;
+    }
    
 }

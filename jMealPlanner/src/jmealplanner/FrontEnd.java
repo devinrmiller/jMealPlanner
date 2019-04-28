@@ -11,12 +11,11 @@ package jmealplanner;
  * @author devin
  */
 
-import javax.swing.JFrame;
-import java.awt.Toolkit;
-import java.awt.Dimension;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
 
 public class FrontEnd extends JFrame {
     
@@ -40,33 +39,148 @@ public class FrontEnd extends JFrame {
         
         populateFridge();
         populateFoodDict();
+        
+        /*
+        *   Fridge Tab Button Listeners
+        */
+        // the - button (delete)
+        jButton6.addActionListener(new ActionListener(){
+            
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //variable declaration
+                int confirmation = 0; 
+                int index = jList3.getSelectedIndex();
+                DefaultListModel model = (DefaultListModel) jList3.getModel();
+                
+                Food item = (Food) jList3.getSelectedValue();
+                
+                //check if a value is selected
+                if (jList3.getSelectedIndex() == -1) 
+                {
+                    JOptionPane.showMessageDialog(getParent(), "Please select an item!");
+                } 
+                else 
+                {
+                    //display a confirmation of Yes | NO | Cancel
+                    //0=yes 1=no 2=cancel
+                    int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this item?");
+                    if (input == 0) 
+                    {
+                        //call our delete function/query
+                        //use confirmation to check if succeeded
+                        confirmation = Food.deleteFood(item.getFoodID());
+                    }
+                    //check if succeeded or failed
+                    if (confirmation == 0) 
+                    {
+                        //fail
+                        JOptionPane.showMessageDialog(getParent(), "Something went wrong  ):");
+                    } 
+                    else if (confirmation == 1) 
+                    {
+                        //succeed. remove item from JList as well
+                        JOptionPane.showMessageDialog(getParent(), "Food Deleted Successfully!");
+                        model.removeElementAt(index);
+                    }
+                }
+                
+                //update lists with similar data
+                jList3.setModel(model);
+                jList4.setModel(model);
+            }
+        });
+        
+        
+        
+        /*
+        *
+        *   Food Dictionary Tab Buttons
+        *
+        */
+        jButton8.addActionListener(new ActionListener(){
+            
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //variable declaration
+                int confirmation = 0; 
+                int index = jList4.getSelectedIndex();
+                DefaultListModel model = (DefaultListModel) jList4.getModel();
+                
+                Food item = (Food) jList4.getSelectedValue();
+                
+                //check if a value is selected
+                if (jList4.getSelectedIndex() == -1) 
+                {
+                    JOptionPane.showMessageDialog(getParent(), "Please select an item!");
+                } 
+                else 
+                {
+                    //display a confirmation of Yes | NO | Cancel
+                    //0=yes 1=no 2=cancel
+                    int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this item?");
+                    if (input == 0) 
+                    {
+                        //call our delete function/query
+                        //use confirmation to check if succeeded
+                        confirmation = Food.deleteFood(item.getFoodID());
+                    }
+                    //check if succeeded or failed
+                    if (confirmation == 0) 
+                    {
+                        //fail
+                        JOptionPane.showMessageDialog(getParent(), "Something went wrong  ):");
+                    } 
+                    else if (confirmation == 1) 
+                    {
+                        //succeed. remove item from JList as well
+                        JOptionPane.showMessageDialog(getParent(), "Food Deleted Successfully!");
+                        model.removeElementAt(index);
+                    }
+                }
+                
+                //update lists with similar data
+                jList3.setModel(model);
+                jList4.setModel(model);
+            }
+        });
     }
     
+    /*
+    *
+    *   Fridge Functions
+    *
+    */
     void populateFridge() 
     {
-        //create array size of our arraylist
-        Food[] fridgeConv = new Food[fridge.size()];
+        DefaultListModel dlm = new DefaultListModel();
         
-        //convert arraylist to array
-        fridge.toArray(fridgeConv);
+        for(Food x : fridge)
+        {
+            dlm.addElement(x);
+        }
         
-        //populate and formate our JList for fridge
-        jList3.setListData(fridgeConv);
+        jList3.setModel(dlm);
         jList3.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jList3.setLayoutOrientation(JList.VERTICAL);
         jList3.setVisibleRowCount(-1);
     }
     
+    /*
+    *
+    *   Food Dictionary Functions
+    *
+    */
     void populateFoodDict()
     {
-        //create array size of our arraylist
-        Food[] foodListConv = new Food[foodList.size()];
+        DefaultListModel dlm = new DefaultListModel();
         
-        //convert arraylist to array
-        foodList.toArray(foodListConv);
+        for(Food x : foodList)
+        {
+            dlm.addElement(x);
+        }
         
-        //populate and formate our JList for food dictionary
-        jList4.setListData(foodListConv);
+        jList4.setModel(dlm);
         jList4.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jList4.setLayoutOrientation(JList.VERTICAL);
         jList4.setVisibleRowCount(-1);
@@ -163,7 +277,7 @@ public class FrontEnd extends JFrame {
         jLabel27 = new javax.swing.JLabel();
         jToggleButton2 = new javax.swing.JToggleButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jList3 = new javax.swing.JList<>();
+        jList3 = new javax.swing.JList();
         jTextField22 = new javax.swing.JTextField();
         jLabel28 = new javax.swing.JLabel();
         jTextField23 = new javax.swing.JTextField();
@@ -193,7 +307,7 @@ public class FrontEnd extends JFrame {
         jComboBox7 = new javax.swing.JComboBox<>();
         jLabel34 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jList4 = new javax.swing.JList<>();
+        jList4 = new javax.swing.JList();
         jTextField27 = new javax.swing.JTextField();
         jTextField28 = new javax.swing.JTextField();
         jTextField29 = new javax.swing.JTextField();
@@ -1042,8 +1156,8 @@ public class FrontEnd extends JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JList<String> jList1;
     private javax.swing.JList<String> jList2;
-    private javax.swing.JList<Food> jList3;
-    private javax.swing.JList<Food> jList4;
+    private javax.swing.JList jList3;
+    private javax.swing.JList jList4;
     private javax.swing.JList<String> jList5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;

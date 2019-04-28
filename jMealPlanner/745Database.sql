@@ -16,6 +16,7 @@ drop table Ingredients cascade constraints;
 
 create table Recipe(
 	recID number(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+	name char(50) not null,
 	category char(30) not null,
 	instructions varchar2(300) not null,
 	servingsTotal number not null,
@@ -58,17 +59,17 @@ alter table Recipe add (constraint servingsRemain check (servingsRemain >= 0));
 
 alter table Food add (constraint quantity check (quantity >= 0));
 
-alter table MealPlan add (constraint fk_breakfast foreign key (breakfast) references Recipe(recID));
-alter table MealPlan add (constraint fk_lunch foreign key (lunch) references Recipe(recID));
-alter table MealPlan add (constraint fk_dinner foreign key (dinner) references Recipe(recID));
+alter table MealPlan add (constraint fk_breakfast foreign key (breakfast) references Recipe(recID) on delete cascade);
+alter table MealPlan add (constraint fk_lunch foreign key (lunch) references Recipe(recID) on delete cascade);
+alter table MealPlan add (constraint fk_dinner foreign key (dinner) references Recipe(recID) on delete cascade);
 
-alter table Ingredients add (constraint fk_recipe_recID foreign key (recID) references Recipe(recID));
-alter table Ingredients add (constraint fk_food_foodID foreign key (foodID) references Food(foodID));
+alter table Ingredients add (constraint fk_recipe_recID foreign key (recID) references Recipe(recID) on delete cascade);
+alter table Ingredients add (constraint fk_food_foodID foreign key (foodID) references Food(foodID) on delete cascade);
 
 --populate Recipes with base data
-insert into Recipe (category, instructions, servingsTotal, servingsRemain) values ('Pasta-Lunch', 'Place dry pasta in boiling water, seasoned with light salt.\n Blah blah blah\n. blah blah.', 12, 0);
-insert into Recipe (category, instructions, servingsTotal, servingsRemain) values ('Salad', 'Mix desired lettuce with tomatoes, croutons, cucumbers and cheese. Toss in Italian dressing.', 12, 0);
-insert into Recipe (category, instructions, servingsTotal, servingsRemain) values ('Grilled Cheese', 'Place cheddar cheese between two slices of bread. Spread butter on top of top slice and bottom of bottom slice of bread. Brown each side over medium-low heat', 12, 0);
+insert into Recipe (name, category, instructions, servingsTotal, servingsRemain) values ('Simple Paste', 'Pasta-Lunch', 'Place dry pasta in boiling water, seasoned with light salt.\n Blah blah blah\n. blah blah.', 12, 0);
+insert into Recipe (name, category, instructions, servingsTotal, servingsRemain) values ('Tomato Salad', 'Salad', 'Mix desired lettuce with tomatoes, croutons, cucumbers and cheese. Toss in Italian dressing.', 12, 0);
+insert into Recipe (name, category, instructions, servingsTotal, servingsRemain) values ('Grilled Cheese', 'Sandwich', 'Place cheddar cheese between two slices of bread. Spread butter on top of top slice and bottom of bottom slice of bread. Brown each side over medium-low heat', 12, 0);
 
 --populate Food with base data
 insert into Food (groupType, calories, carbs, protein, fat, name, quantity, quantityMeasurement) values ('Grain', 5, 5, 0, 10, 'Dry Angel Hair Pasta', 16, 'oz');
@@ -116,6 +117,7 @@ insert into Ingredients (recID, foodID, quantity, quantityMeasurement) values (3
 insert into Ingredients (recID, foodID, quantity, quantityMeasurement) values (3, 10, 3, 'oz');
 insert into Ingredients (recID, foodID, quantity, quantityMeasurement) values (3, 12, 1, 'oz');
 
+set linesize 1000;
 
 commit;
 
