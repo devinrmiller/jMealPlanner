@@ -5,11 +5,7 @@
  */
 package jmealplanner;
 
-import java.sql.Connection;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleResultSet;
 
 /**
  *

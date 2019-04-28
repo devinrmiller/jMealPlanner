@@ -11,17 +11,12 @@ package jmealplanner;
  * @author devin
  */
 
-import java.awt.Color;
-import java.awt.Component;
 import javax.swing.JFrame;
 import java.awt.Toolkit;
 import java.awt.Dimension;
 import java.util.ArrayList;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
 import javax.swing.JList;
-import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
 
 public class FrontEnd extends JFrame {
     
@@ -44,20 +39,37 @@ public class FrontEnd extends JFrame {
         foodList = Food.initilizeFoodList(5);                   //contains list of objects of all foods in database. including negative values
         
         populateFridge();
+        populateFoodDict();
     }
     
     void populateFridge() 
     {
+        //create array size of our arraylist
         Food[] fridgeConv = new Food[fridge.size()];
-        int count = 0;
-        for(Food x: fridge)
-        {
-            fridgeConv[count] = x;
-            count++;
-        }
         
-        jList3 = new JList(fridgeConv);
-        jList3.setCellRenderer(new FoodRenderer());
+        //convert arraylist to array
+        fridge.toArray(fridgeConv);
+        
+        //populate and formate our JList for fridge
+        jList3.setListData(fridgeConv);
+        jList3.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jList3.setLayoutOrientation(JList.VERTICAL);
+        jList3.setVisibleRowCount(-1);
+    }
+    
+    void populateFoodDict()
+    {
+        //create array size of our arraylist
+        Food[] foodListConv = new Food[foodList.size()];
+        
+        //convert arraylist to array
+        foodList.toArray(foodListConv);
+        
+        //populate and formate our JList for food dictionary
+        jList4.setListData(foodListConv);
+        jList4.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jList4.setLayoutOrientation(JList.VERTICAL);
+        jList4.setVisibleRowCount(-1);
     }
     
 
@@ -151,7 +163,7 @@ public class FrontEnd extends JFrame {
         jLabel27 = new javax.swing.JLabel();
         jToggleButton2 = new javax.swing.JToggleButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jList3 = new javax.swing.JList();
+        jList3 = new javax.swing.JList<>();
         jTextField22 = new javax.swing.JTextField();
         jLabel28 = new javax.swing.JLabel();
         jTextField23 = new javax.swing.JTextField();
@@ -1030,8 +1042,8 @@ public class FrontEnd extends JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JList<String> jList1;
     private javax.swing.JList<String> jList2;
-    private javax.swing.JList jList3;
-    private javax.swing.JList<String> jList4;
+    private javax.swing.JList<Food> jList3;
+    private javax.swing.JList<Food> jList4;
     private javax.swing.JList<String> jList5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
