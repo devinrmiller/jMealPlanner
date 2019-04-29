@@ -118,9 +118,6 @@ public class Food {
    }
    
    public String toString(){
-       //String toReturn = name + " | Group: " + category + " | Calories: " + calories + "g | Fat: " + fat + "g | Carbs" + carbs + "g | Protein" + protein + "g | On Hand: " + quantity;
-       //String.format("%-30s%-30s%10d", name, category, calories, fat, carbs, protein, quantity);
-       
        return String.format( "Name: %-50s Group: %-20s Calories: %-20s Fat: %-20s Carbs: %-20s Protein: %-20s On Hand: %-20s"
                             , name, category, calories+"g", fat+"g", carbs+"g", protein+"g", quantity+""+quantityMeasurement);
    }

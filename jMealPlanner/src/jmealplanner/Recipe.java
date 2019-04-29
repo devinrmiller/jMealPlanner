@@ -44,7 +44,7 @@ public class Recipe {
         this.servingsRemain = in_servingsRemain;
     }
 
-    Recipe(String id, String name, String cat, int serves, int cals, int carbs, int prot, int fat) {
+    Recipe(String id, String name, String cat, int serves, int cals, int carbs, int prot, int fat, String instructions) {
         this.recID = id;
         this.name = name;
         this.category = cat;
@@ -53,7 +53,7 @@ public class Recipe {
         this.carbs = carbs;
         this.prot = prot;
         this.fat = fat;
-                
+        this.instructions = instructions;
     }
 
     String getRecID() {
@@ -114,6 +114,11 @@ public class Recipe {
             this.servingsRemain = 0;
         }
     }
+    
+    public String toString(){
+       return String.format( "Name: %-50s Category: %-20s", name, category);
+   }
+    
     public static ArrayList<Recipe> initilizeRecipeList()
     {
          //initilize connection variables
@@ -126,10 +131,10 @@ public class Recipe {
         //execute sql commands
         try 
         {
-            sqlStatement = "select Ingredients.recID,recipe.name, category, servingsTotal, sum((calories * Ingredients.quantity))as cals , sum(carbs * Ingredients.quantity) as carbs, sum(protein * Ingredients.quantity) as prot, sum(fat * Ingredients.quantity) as fat\n"
+            sqlStatement = "select Ingredients.recID, recipe.name, category, servingsTotal, sum((calories * Ingredients.quantity))as cals , sum(carbs * Ingredients.quantity) as carbs, sum(protein * Ingredients.quantity) as prot, sum(fat * Ingredients.quantity) as fat, Recipe.instructions\n"
                     + "from Ingredients, Food, recipe\n"
                     + "where Ingredients.foodID = Food.foodID and recipe.recID = Ingredients.recID\n"
-                    + "group by Ingredients.recID,category, servingsTotal,recipe.name";
+                    + "group by Ingredients.recID, category, servingsTotal, recipe.name, recipe.instructions";
             
             pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
 
@@ -149,10 +154,11 @@ public class Recipe {
                 int carbs = rs.getInt("carbs");
                 int prot = rs.getInt("prot");
                 int fat = rs.getInt("fat");
+                String instruc = rs.getString("instructions");
                 
                 
                 
-                Recipe re = new Recipe(id, name, cat, serves, cals, carbs, prot, fat);
+                Recipe re = new Recipe(id, name, cat, serves, cals, carbs, prot, fat, instruc);
                 
                 //poplate arraylist with objects
                 RecipeList.add(re);
@@ -171,7 +177,47 @@ public class Recipe {
         
         return RecipeList;
     }
+    
+    public static int deleteRecipe(String passedID)
+    {
+        //initilize connection variables
+        //outcome is used rather than return in catch so that the connection is still
+        //closed by allowing the try to reach finally
+        String sqlStatement = "";
+        int outcome = 1;
 
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "delete from recipe where recID = ?";
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
+            pst.setInt(1, Integer.valueOf(passedID));
+
+            //execute the query
+            rs = (OracleResultSet) pst.executeQuery();
+            if(rs.next() == false)
+            {
+                outcome = 0;
+            }
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+        
+        return outcome;
+    }
+
+    
     // addIngredient
     // removeIngredient
 }

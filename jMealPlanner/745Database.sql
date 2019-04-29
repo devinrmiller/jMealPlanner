@@ -3,13 +3,6 @@ drop table Recipe cascade constraints;
 drop table Food cascade constraints;
 drop table MealPlan cascade constraints;
 drop table Ingredients cascade constraints;
-
---drop sequences
---drop sequence recipe_seq;
---drop sequence food_seq;
---drop sequence meal_seq;
-
---create sequences for our auto incrementing primary key
 --create sequence recipe_seq start with 1;
 --create sequence food_seq start with 1;
 --create sequence meal_seq start with 1;
@@ -36,7 +29,7 @@ create table Food(
 );																							
 
 create table MealPlan(
-	dayOfWeek number(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
+	dayOfWeek number(10),
 	breakfast number(10) not null,																--breakfast, lunch and dinner refernce a recipe ID
 	lunch number(10) not null,
 	dinner number(10) not null
@@ -89,13 +82,13 @@ insert into Food (groupType, calories, carbs, protein, fat, name, quantity, quan
 insert into Food (groupType, calories, carbs, protein, fat, name, quantity, quantityMeasurement) values ('Dairy', 5, 5, 5, 0, 'Cayenne Pepper', 0, 'oz');
 
 --populate MealPlan with base data
-insert into MealPlan (breakfast, lunch, dinner) values (1, 2, 3);
-insert into MealPlan (breakfast, lunch, dinner) values (3, 2, 1);
-insert into MealPlan (breakfast, lunch, dinner) values (2, 1, 3);
-insert into MealPlan (breakfast, lunch, dinner) values (3, 1, 2);
-insert into MealPlan (breakfast, lunch, dinner) values (1, 1, 1);
-insert into MealPlan (breakfast, lunch, dinner) values (2, 2, 2);
-insert into MealPlan (breakfast, lunch, dinner) values (3, 3, 3);
+insert into MealPlan (dayOfWeek, breakfast, lunch, dinner) values (1, 1, 2, 3);
+insert into MealPlan (dayOfWeek, breakfast, lunch, dinner) values (2, 3, 2, 1);
+insert into MealPlan (dayOfWeek, breakfast, lunch, dinner) values (3, 2, 1, 3);
+insert into MealPlan (dayOfWeek, breakfast, lunch, dinner) values (4, 3, 1, 2);
+insert into MealPlan (dayOfWeek, breakfast, lunch, dinner) values (5, 1, 1, 1);
+insert into MealPlan (dayOfWeek, breakfast, lunch, dinner) values (6, 2, 2, 2);
+insert into MealPlan (dayOfWeek, breakfast, lunch, dinner) values (7, 3, 3, 3);
 
 --populate Ingredients with base data
 --pasta

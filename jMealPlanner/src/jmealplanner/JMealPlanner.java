@@ -23,7 +23,6 @@ public class JMealPlanner {
     {
         FrontEnd fe = new FrontEnd();
         fe.setVisible(true);
-        
     }
     
 }
