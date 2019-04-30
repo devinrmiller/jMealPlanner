@@ -38,6 +38,11 @@ public class FrontEnd extends JFrame {
     public FrontEnd() {
         initComponents();
         
+        //disable Text Fields
+        jTextField5.setEditable(false);
+        jTextField6.setEditable(false);
+        jTextField7.setEditable(false);
+        jTextField8.setEditable(false);
         jTextField13.setEditable(false);
         jTextField14.setEditable(false);
         jTextField15.setEditable(false);
@@ -60,6 +65,7 @@ public class FrontEnd extends JFrame {
         populateRecipe();
         populateMealPlan();
         
+        //set the day of Meal Plan to Sunday on startup
         DefaultListModel modelToPass = (DefaultListModel) jList1.getModel();
         sortJListMealPlan(modelToPass, 1);
         
@@ -68,7 +74,7 @@ public class FrontEnd extends JFrame {
         *   Fridge Tab Button Listeners
         *
         */
-        // the - button (delete)
+        // the - button fridge (delete)
         jButton6.addActionListener(new ActionListener(){
             
             @Override
@@ -113,7 +119,9 @@ public class FrontEnd extends JFrame {
                             fridge = Food.initilizeFoodList(0);
                             foodList = Food.initilizeFoodList(5);
                             recipeList = Recipe.initilizeRecipeList();
+                            mealList = MealPlan.initilizeMealList();
 
+                            populateMealPlan();
                             populateRecipe();
                             populateFridge();
                             populateFoodDict();
@@ -123,7 +131,7 @@ public class FrontEnd extends JFrame {
             }
         });
         
-        //the + button (add/insert)
+        //the + button fridge (add/insert)
         jButton5.addActionListener(new ActionListener(){
             
             @Override
@@ -153,6 +161,58 @@ public class FrontEnd extends JFrame {
                 int option = JOptionPane.showConfirmDialog(getParent(), foodInfo, "Enter Information for new Food", JOptionPane.OK_CANCEL_OPTION);
                 if(option == JOptionPane.OK_OPTION)
                 {
+                    //check that input calues are correct
+                    if(foodName.getText().isEmpty() || foodGroup.getText().isEmpty() || foodCalories.getText().isEmpty() || foodCarbs.getText().isEmpty() || foodProtein.getText().isEmpty() ||
+                            foodFat.getText().isEmpty() || foodQuant.getText().isEmpty() || foodQuantMeasure.getText().isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Text Fields Must Not Be Empty!");
+                        return;
+                    }
+                    try 
+                    {
+                        Integer.parseInt(foodCalories.getText());
+                    } 
+                    catch (NumberFormatException er) 
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Calories Must Be A Number!");
+                        return;
+                    }
+                    try 
+                    {
+                        Integer.parseInt(foodCarbs.getText());
+                    } 
+                    catch (NumberFormatException er) 
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Carbs Must Be A Number!");
+                        return;
+                    }
+                    try 
+                    {
+                        Integer.parseInt(foodProtein.getText());
+                    } 
+                    catch (NumberFormatException er) 
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Protein Must Be A Number!");
+                        return;
+                    }
+                    try 
+                    {
+                        Integer.parseInt(foodFat.getText());
+                    } 
+                    catch (NumberFormatException er) 
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Fat Must Be A Number!");
+                        return;
+                    }
+                    try 
+                    {
+                        Integer.parseInt(foodQuant.getText());
+                    } 
+                    catch (NumberFormatException er) 
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Quantity Must Be A Number!");
+                        return;
+                    }
                     //get entered values
                     String value1 = foodName.getText();
                     String value2 = foodGroup.getText();
@@ -183,10 +243,12 @@ public class FrontEnd extends JFrame {
                         //repopulate JList using existing query rather than
                         //creating new one to get the ID of newly entered food
                         //and creating an object to add
-                        fridge = Food.initilizeFoodList(0);                     
+                        fridge = Food.initilizeFoodList(0);
                         foodList = Food.initilizeFoodList(5);
                         recipeList = Recipe.initilizeRecipeList();
-                            
+                        mealList = MealPlan.initilizeMealList();
+
+                        populateMealPlan();
                         populateRecipe();
                         populateFridge();
                         populateFoodDict();
@@ -202,6 +264,7 @@ public class FrontEnd extends JFrame {
         *   Food Dictionary Tab Buttons
         *
         */
+        //the - button food dictionary (delete)
         jButton8.addActionListener(new ActionListener(){
             
             @Override
@@ -247,7 +310,9 @@ public class FrontEnd extends JFrame {
                             fridge = Food.initilizeFoodList(0);
                             foodList = Food.initilizeFoodList(5);
                             recipeList = Recipe.initilizeRecipeList();
+                            mealList = MealPlan.initilizeMealList();
 
+                            populateMealPlan();
                             populateRecipe();
                             populateFridge();
                             populateFoodDict();
@@ -260,47 +325,54 @@ public class FrontEnd extends JFrame {
             }
         });
         
-        //the + button (add/insert)
-        jButton7.addActionListener(new ActionListener(){
+        //the + button Meal Plan (add/insert)
+        jButton1.addActionListener(new ActionListener(){
             
             @Override
             public void actionPerformed(ActionEvent e){
                 //variable declaration
-                JTextField foodName = new JTextField();
-                JTextField foodGroup = new JTextField();
-                JTextField foodCalories = new JTextField();
-                JTextField foodCarbs = new JTextField();
-                JTextField foodProtein = new JTextField();
-                JTextField foodFat = new JTextField();
-                JTextField foodQuant = new JTextField();
-                JTextField foodQuantMeasure = new JTextField();
+                String[] days = {"Day", "Breakfast", "Lunch", "Dinner"};
                 
-                Object[] foodInfo ={
-                    "Name: ", foodName,
-                    "Food Group: ", foodGroup,
-                    "Calories: ", foodCalories,
-                    "Carbs: ", foodCarbs,
-                    "Protein: ", foodProtein,
-                    "Fat: ", foodFat,
-                    "Quantity: ", foodQuant,
-                    "Measurement Type (oz, Fl.oz, etc.): ", foodQuantMeasure
+                JList recipeSelect = new JList(jList2.getModel());
+                JComboBox daySelect = new JComboBox(days);
+                int whichDay = 0;
+                MealPlan mealItem = (MealPlan) jList1.getSelectedValue();
+                
+                Object[] mealInfo ={
+                    "Recipe: ", recipeSelect,
+                    "Meal: ", daySelect
                 };
-
-                int option = JOptionPane.showConfirmDialog(getParent(), foodInfo, "Enter Information for new Food", JOptionPane.OK_CANCEL_OPTION);
+                
+                int option = JOptionPane.showConfirmDialog(getParent(), mealInfo, "Enter Information for new Recipe", JOptionPane.OK_CANCEL_OPTION);
                 if(option == JOptionPane.OK_OPTION)
                 {
-                    String value1 = foodName.getText();
-                    String value2 = foodGroup.getText();
-                    String value3 = foodCalories.getText();
-                    String value4 = foodCarbs.getText();
-                    String value5 = foodProtein.getText();
-                    String value6 = foodFat.getText();
-                    String value7 = foodQuant.getText();
-                    String value8 = foodQuantMeasure.getText();
+                    Recipe item = (Recipe) recipeSelect.getSelectedValue();
                     
-                    String toInsert[] = {value1, value2, value3, value4, value5, value6, value7, value8};
+                    //check that input calues are correct
+                    if(recipeSelect.getSelectedIndex() == -1)
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Please Select a Recipe!");
+                        return;
+                    }
+                    if(daySelect.getSelectedItem() == "Day")
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Please Select a Meal!");
+                        return;
+                    }
+                    if(daySelect.getSelectedItem() == "Breakfast")
+                    {
+                        whichDay = 1;
+                    }
+                    if(daySelect.getSelectedItem() == "Lunch")
+                    {
+                        whichDay = 2;
+                    }
+                    if(daySelect.getSelectedItem() == "Dinner")
+                    {
+                        whichDay = 3;
+                    }
                     
-                    int confirmation = Food.insertFood(toInsert);
+                    int confirmation = MealPlan.insertMealPlan(mealItem.getDayOfWeek(), Integer.parseInt(item.getRecID()), whichDay);
                     
                     //check if succeeded or failed
                     if (confirmation == 0) 
@@ -311,7 +383,7 @@ public class FrontEnd extends JFrame {
                     else if (confirmation == 1) 
                     {
                         //succeed. 
-                        JOptionPane.showMessageDialog(getParent(), "Food Added Successfully!");
+                        JOptionPane.showMessageDialog(getParent(), "Meal Plan Updated Successfully!");
                         
                         //repopulate JList using existing query rather than
                         //creating new one to get the ID of newly entered food
@@ -319,7 +391,9 @@ public class FrontEnd extends JFrame {
                         fridge = Food.initilizeFoodList(0);                     
                         foodList = Food.initilizeFoodList(5);
                         recipeList = Recipe.initilizeRecipeList();
-                            
+                        mealList = MealPlan.initilizeMealList();
+
+                        populateMealPlan();
                         populateRecipe();
                         populateFridge();
                         populateFoodDict();
@@ -328,18 +402,94 @@ public class FrontEnd extends JFrame {
             }
         });
         
+        //update the quantity from food dictionary
+        jButton10.addActionListener(new ActionListener(){
+            
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //variable declaration
+                int confirmation = 0;
+                String quantityToUpdate = jTextField22.getText();
+                
+                //check the text field is not empty
+                if(quantityToUpdate.isEmpty())
+                {
+                    JOptionPane.showMessageDialog(getParent(), "Please enter a quantity!");
+                    return;
+                }
+                
+                //check that entered value is a number
+                try 
+                {
+                    Integer.parseInt(quantityToUpdate);
+                } 
+                catch (NumberFormatException er) 
+                {
+                    JOptionPane.showMessageDialog(getParent(), "Quantity Must Be A Number!");
+                    return;
+                }
+                
+                Food item = (Food) jList4.getSelectedValue();
+                
+                //check if a value is selected
+                if (jList4.getSelectedIndex() == -1) 
+                {
+                    JOptionPane.showMessageDialog(getParent(), "Please select an item!");
+                }
+                else 
+                {
+                    //display a confirmation of Yes | NO | Cancel
+                    //0=yes 1=no 2=cancel
+                    int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to update the quantity?");
+                    if (input == 0) 
+                    {
+                        //call our delete function/query
+                        //use confirmation to check if succeeded
+                        confirmation = Food.updateFoodQuant(item.getFoodID(), Integer.parseInt(quantityToUpdate) );
+
+                        //check if succeeded or failed
+                        if (confirmation == 0) 
+                        {
+                            //fail
+                            JOptionPane.showMessageDialog(getParent(), "Something went wrong  ):");
+                        } 
+                        else if (confirmation == 1) 
+                        {
+                            //succeed. remove item from JList as well
+                            JOptionPane.showMessageDialog(getParent(), "Quantity Updated Successfully!");
+
+                            //repopulate JList using existing query rather than
+                            //creating new one to get the ID of newly entered food
+                            //and creating an object to add
+                            fridge = Food.initilizeFoodList(0);
+                            foodList = Food.initilizeFoodList(5);
+                            recipeList = Recipe.initilizeRecipeList();
+                            mealList = MealPlan.initilizeMealList();
+
+                            populateMealPlan();
+                            populateRecipe();
+                            populateFridge();
+                            populateFoodDict();
+                        }
+                    }
+                    
+                    
+                }
+                
+            }
+        });
+        
         /*
         *
         *   Recipe Listeners
         *
         */
+        //update bottom fields on click
         jList2.addMouseListener(new MouseAdapter(){
             public void mouseClicked(MouseEvent evt){
-                JList list = (JList) evt.getSource();
                 if(evt.getClickCount() == 1)
                 {
                     //int index = jList2.getSelectedIndex();
-                    DefaultListModel model = (DefaultListModel) jList2.getModel();
                     DefaultListModel modelInstruc = (DefaultListModel) jList6.getModel();
                     modelInstruc.removeAllElements();
                 
@@ -362,6 +512,7 @@ public class FrontEnd extends JFrame {
             }
         });
         
+        //delete selected recipe
         jButton3.addActionListener(new ActionListener(){
             
             @Override
@@ -407,7 +558,9 @@ public class FrontEnd extends JFrame {
                             fridge = Food.initilizeFoodList(0);
                             foodList = Food.initilizeFoodList(5);
                             recipeList = Recipe.initilizeRecipeList();
+                            mealList = MealPlan.initilizeMealList();
 
+                            populateMealPlan();
                             populateRecipe();
                             populateFridge();
                             populateFoodDict();
@@ -420,11 +573,214 @@ public class FrontEnd extends JFrame {
             }
         });
         
+        //insert new recipe *********************************************************************************************************************
+        jButton4.addActionListener(new ActionListener(){
+            
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //variable declaration
+                JTextField recipeName = new JTextField();
+                JTextField recipeCategory = new JTextField();
+                JTextField recipeInstructions = new JTextField();
+                JTextField recipeServings = new JTextField();
+                
+                JList recipeIngredients = new JList(jList3.getModel());
+                
+                recipeIngredients.setSelectionModel(new DefaultListSelectionModel() {
+                    @Override
+                    public void setSelectionInterval(int index0, int index1) {
+                        if (super.isSelectedIndex(index0)) {
+                            super.removeSelectionInterval(index0, index1);
+                        } else {
+                            super.addSelectionInterval(index0, index1);
+                        }
+                    }
+                });
+                recipeIngredients.setLayoutOrientation(JList.VERTICAL);
+                recipeIngredients.setVisibleRowCount(5);
+                
+                Object[] recipeInfo ={
+                    "Name: ", recipeName,
+                    "Category: ", recipeCategory,
+                    "Instructions: ", recipeInstructions,
+                    "Servings: ", recipeServings,
+                    "Ingredients: ", recipeIngredients
+                };
+
+                int option = JOptionPane.showConfirmDialog(getParent(), recipeInfo, "Enter Information for new Recipe", JOptionPane.OK_CANCEL_OPTION);
+                if(option == JOptionPane.OK_OPTION)
+                {
+                    //check that input calues are correct
+                    if(recipeName.getText().isEmpty() || recipeCategory.getText().isEmpty() || recipeInstructions.getText().isEmpty() || recipeServings.getText().isEmpty())
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Text Fields Must Not Be Empty!");
+                        return;
+                    }
+                    try 
+                    {
+                        Integer.parseInt(recipeServings.getText());
+                    } 
+                    catch (NumberFormatException er) 
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Servings Must Be A Number!");
+                        return;
+                    }
+                    
+                    //delcare our variables to store input fields
+                    String value1 = recipeName.getText();
+                    String value2 = recipeCategory.getText();
+                    String value3 = recipeInstructions.getText();
+                    String value4 = recipeServings.getText();
+                    
+                    //get selected items
+                    int[] selected = recipeIngredients.getSelectedIndices();
+                    
+                    //make sure at least one ingredient is selected
+                    if(recipeIngredients.getSelectedIndices().length == 0)
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Recipe Must Have At Least One Ingredient!");
+                        return;
+                    }
+                    
+                    Food[] tempArray = new Food[selected.length];
+                    String[] foodIDArray = new String[selected.length];
+                    
+                    //convert selected items full object to just the food id
+                    for (int i = 0; i < selected.length; i++) 
+                    {
+                        tempArray[i] = (Food) recipeIngredients.getModel().getElementAt(selected[i]);
+                        foodIDArray[i] = tempArray[i].getFoodID();
+                    }
+                    
+                    //insert recipe into database
+                    String toInsert[] = {value1, value2, value3, value4};
+                    
+                    int confirmation = Recipe.insertRecipe(toInsert);
+                    
+                    //check if succeeded or failed
+                    if (confirmation == 0) 
+                    {
+                        //fail
+                        JOptionPane.showMessageDialog(getParent(), "Something went wrong  ):");
+                    } 
+                    else if (confirmation == 1) 
+                    {
+                        //succeed
+                        
+                        //repopulate JList using existing query rather than
+                        //creating new one to get the ID of newly entered food
+                        //and creating an object to add
+                        fridge = Food.initilizeFoodList(0);                     
+                        foodList = Food.initilizeFoodList(5);
+                        recipeList = Recipe.initilizeRecipeList();
+                        mealList = MealPlan.initilizeMealList();
+                        
+                        String tempID = recipeList.get(recipeList.size()-1).getRecID();
+                        System.out.println(tempID);
+                            
+                        populateMealPlan();
+                        populateRecipe();
+                        populateFridge();
+                        populateFoodDict();
+                        
+                        JOptionPane.showMessageDialog(getParent(), "Recipe Added Successfully!");
+                    }
+                }
+            }
+        });
+        
         /*
         *
         *   Meal Plan Listeners
         *
         */
+        //mouse click listener to get health facts
+        jList1.addMouseListener(new MouseAdapter(){
+            public void mouseClicked(MouseEvent evt){
+                if(evt.getClickCount() == 1)
+                {
+                    MealPlan item = (MealPlan) jList1.getSelectedValue();
+                    int breakfastID = item.getBreakfast();
+                    int lunchID = item.getLunch();
+                    int dinnerID = item.getDinner();
+                    
+                    int[] breakfastTotals = MealPlan.getTotalHealth(breakfastID);
+                    int[] lunchTotals = MealPlan.getTotalHealth(lunchID);
+                    int[] dinnerTotals = MealPlan.getTotalHealth(dinnerID);
+                    
+                    int[] dailyTotals = new int[4];
+                    for(int i = 0; i < 4; i ++)
+                    {
+                        dailyTotals[i] = breakfastTotals[i] + lunchTotals[i] + dinnerTotals[i];
+                    }
+                    
+                    jTextField5.setText(String.valueOf(dailyTotals[0]));
+                    jTextField6.setText(String.valueOf(dailyTotals[1]));
+                    jTextField7.setText(String.valueOf(dailyTotals[2]));
+                    jTextField8.setText(String.valueOf(dailyTotals[3]));
+                }
+            }
+        });
+        
+        //delete a meal plan (or rather set it to null)
+        jButton2.addActionListener(new ActionListener(){
+            
+            @Override
+            public void actionPerformed(ActionEvent e){
+                //variable declaration
+                int confirmation = 0; 
+                
+                MealPlan item = (MealPlan) jList1.getSelectedValue();
+                
+                //check if a value is selected
+                if (jList1.getSelectedIndex() == -1) 
+                {
+                    JOptionPane.showMessageDialog(getParent(), "Please select an item!");
+                } 
+                else 
+                {
+                    //display a confirmation of Yes | NO | Cancel
+                    //0=yes 1=no 2=cancel
+                    int input = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear this day?");
+                    if (input == 0) 
+                    {
+                        //call our delete function/query
+                        //use confirmation to check if succeeded
+                        confirmation = MealPlan.deleteMealPlanItem(item.getDayOfWeek());
+
+                        //check if succeeded or failed
+                        if (confirmation == 0) 
+                        {
+                            //fail
+                            JOptionPane.showMessageDialog(getParent(), "Something went wrong  ):");
+                        } 
+                        else if (confirmation == 1) 
+                        {
+                            //succeed. remove item from JList as well
+                            JOptionPane.showMessageDialog(getParent(), "Meal Plan Clear Successfully!");
+
+                            //repopulate JList using existing query rather than
+                            //creating new one to get the ID of newly entered food
+                            //and creating an object to add
+                            fridge = Food.initilizeFoodList(0);
+                            foodList = Food.initilizeFoodList(5);
+                            recipeList = Recipe.initilizeRecipeList();
+                            mealList = MealPlan.initilizeMealList();
+
+                            populateMealPlan();
+                            populateRecipe();
+                            populateFridge();
+                            populateFoodDict();
+                        }
+                    }
+                    
+                    
+                }
+                
+            }
+        });
+        
+        //sort mealplan using combo box
         jComboBox1.addActionListener (new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 int toPass = 0;
@@ -463,6 +819,7 @@ public class FrontEnd extends JFrame {
                 sortJListMealPlan(modelToPass, toPass);
             }
         });
+        
     }
     
     /*
@@ -491,11 +848,6 @@ public class FrontEnd extends JFrame {
         }
     }
     
-    /*
-    *
-    *   Fridge Functions
-    *
-    */
     void populateFridge() 
     {
         DefaultListModel dlm = new DefaultListModel();
@@ -513,11 +865,8 @@ public class FrontEnd extends JFrame {
         
     }
     
-    /*
-    *
-    *   Food Dictionary Functions
-    *
-    */
+    //methods for populating initially and refreshing our JLists
+    //for each tab
     void populateFoodDict()
     {
         DefaultListModel dlm = new DefaultListModel();
@@ -558,8 +907,23 @@ public class FrontEnd extends JFrame {
     {
         DefaultListModel dlm = new DefaultListModel();
         
-        for(MealPlan x : mealList)
+        for (MealPlan x : mealList) 
         {
+            for (Recipe z : recipeList) 
+            {
+                if(x.getBreakfast() == Integer.parseInt(z.getRecID()))
+                {
+                    x.setBreakConv(z.getName());
+                }
+                if(x.getLunch() == Integer.parseInt(z.getRecID()))
+                {
+                    x.setLunchConv(z.getName());
+                }
+                if(x.getDinner() == Integer.parseInt(z.getRecID()))
+                {
+                    x.setDinnerConv(z.getName());
+                }
+            }
             dlm.addElement(x);
         }
         
@@ -567,6 +931,9 @@ public class FrontEnd extends JFrame {
         jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         jList1.setLayoutOrientation(JList.VERTICAL);
         jList1.setVisibleRowCount(-1);
+        
+        DefaultListModel modelToPass = (DefaultListModel) jList1.getModel();
+        sortJListMealPlan(modelToPass, 1);
     }
 
     /**
@@ -589,37 +956,6 @@ public class FrontEnd extends JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jTabbedPane5 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
-        jTextField10 = new javax.swing.JTextField();
-        jTextField11 = new javax.swing.JTextField();
-        jTextField12 = new javax.swing.JTextField();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jList2 = new javax.swing.JList();
@@ -665,208 +1001,32 @@ public class FrontEnd extends JFrame {
         jList4 = new javax.swing.JList();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
+        jButton10 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jTextField22 = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel2 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        jTextField5 = new javax.swing.JTextField();
+        jTextField6 = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jTextField7 = new javax.swing.JTextField();
+        jTextField8 = new javax.swing.JTextField();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jList1 = new javax.swing.JList();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("jMealPlanner");
         setSize(d.width, d.height);
 
         jTabbedPane5.setTabPlacement(javax.swing.JTabbedPane.LEFT);
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }));
-
-        jLabel2.setText("Day:");
-
-        jTextField1.setColumns(5);
-
-        jLabel3.setText("Meal Calories:");
-
-        jLabel4.setText("Meal Fat:");
-
-        jTextField2.setColumns(5);
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
-            }
-        });
-
-        jTextField3.setColumns(5);
-
-        jLabel5.setText("Meal Protein:");
-
-        jLabel6.setText("Meal Carbs:");
-
-        jTextField4.setColumns(5);
-
-        jButton1.setFont(new java.awt.Font("Ubuntu Light", 0, 48)); // NOI18N
-        jButton1.setText("+");
-
-        jButton2.setFont(new java.awt.Font("Ubuntu Light", 0, 48)); // NOI18N
-        jButton2.setText("-");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jLabel7.setText("Total Daily Calories:");
-
-        jTextField5.setColumns(5);
-
-        jTextField6.setColumns(5);
-
-        jLabel8.setText("Total Daily Carbs:");
-
-        jLabel9.setText("Total Daily Protein:");
-
-        jLabel10.setText("Total Daily Fat:");
-
-        jTextField7.setColumns(5);
-
-        jTextField8.setColumns(5);
-
-        jLabel11.setText("Total Weekly Calories:");
-
-        jLabel12.setText("Total Weekly Carbs:");
-
-        jLabel13.setText("Totaly Weekly Protein:");
-
-        jLabel14.setText("Total Weekly Fat:");
-
-        jTextField9.setColumns(5);
-
-        jTextField10.setColumns(5);
-
-        jTextField11.setColumns(5);
-
-        jTextField12.setColumns(5);
-
-        jScrollPane2.setViewportView(jList1);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel7))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel8))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel9))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel10)))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel11))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel12)))
-                                .addGap(20, 20, 20)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel13))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel14)))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(134, 268, Short.MAX_VALUE)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel7)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11)
-                            .addComponent(jTextField9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6)
-                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel12)
-                            .addComponent(jTextField10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel9)
-                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel13)
-                            .addComponent(jTextField11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel10)
-                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel14)
-                            .addComponent(jTextField12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
-        jTabbedPane5.addTab("Meal Plans", jPanel1);
 
         jScrollPane1.setViewportView(jList2);
 
@@ -1125,6 +1285,10 @@ public class FrontEnd extends JFrame {
         jButton8.setFont(new java.awt.Font("Ubuntu Light", 0, 48)); // NOI18N
         jButton8.setText("-");
 
+        jButton10.setText("Update");
+
+        jLabel1.setText("Update Food Quantity On Hand:");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -1134,7 +1298,11 @@ public class FrontEnd extends JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane4)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(0, 757, Short.MAX_VALUE)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jTextField22)
+                            .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 601, Short.MAX_VALUE)
                         .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -1146,19 +1314,124 @@ public class FrontEnd extends JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jTextField22, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
         jTabbedPane5.addTab("Food Dictionary", jPanel5);
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" }));
+
+        jLabel2.setText("Day:");
+
+        jButton1.setFont(new java.awt.Font("Ubuntu Light", 0, 48)); // NOI18N
+        jButton1.setText("+");
+
+        jButton2.setFont(new java.awt.Font("Ubuntu Light", 0, 48)); // NOI18N
+        jButton2.setText("-");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel7.setText("Total Daily Calories:");
+
+        jTextField5.setColumns(5);
+
+        jTextField6.setColumns(5);
+
+        jLabel8.setText("Total Daily Carbs:");
+
+        jLabel9.setText("Total Daily Protein:");
+
+        jLabel10.setText("Total Daily Fat:");
+
+        jTextField7.setColumns(5);
+
+        jTextField8.setColumns(5);
+
+        jScrollPane2.setViewportView(jList1);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel10))
+                                .addGap(47, 47, 47)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addGap(43, 43, 43)
+                                .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(445, 573, Short.MAX_VALUE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel10)
+                            .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
+        jTabbedPane5.addTab("Meal Plans", jPanel1);
+
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -1175,10 +1448,6 @@ public class FrontEnd extends JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
@@ -1232,6 +1501,7 @@ public class FrontEnd extends JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -1241,11 +1511,8 @@ public class FrontEnd extends JFrame {
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
@@ -1256,13 +1523,9 @@ public class FrontEnd extends JFrame {
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel39;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel41;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1273,7 +1536,6 @@ public class FrontEnd extends JFrame {
     private javax.swing.JList<String> jList5;
     private javax.swing.JList jList6;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -1287,10 +1549,6 @@ public class FrontEnd extends JFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane5;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField11;
-    private javax.swing.JTextField jTextField12;
     private javax.swing.JTextField jTextField13;
     private javax.swing.JTextField jTextField14;
     private javax.swing.JTextField jTextField15;
@@ -1298,18 +1556,15 @@ public class FrontEnd extends JFrame {
     private javax.swing.JTextField jTextField17;
     private javax.swing.JTextField jTextField18;
     private javax.swing.JTextField jTextField19;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField20;
     private javax.swing.JTextField jTextField21;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField22;
     private javax.swing.JTextField jTextField31;
     private javax.swing.JTextField jTextField32;
     private javax.swing.JTextField jTextField33;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
     private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
     // End of variables declaration//GEN-END:variables
 }

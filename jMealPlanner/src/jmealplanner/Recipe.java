@@ -17,7 +17,7 @@ import oracle.jdbc.OracleResultSet;
  */
 public class Recipe {
 
-    private final String recID;
+    private String recID;
     private String category;
     private String instructions;
     private int servingsMade;
@@ -121,7 +121,7 @@ public class Recipe {
     
     public static ArrayList<Recipe> initilizeRecipeList()
     {
-         //initilize connection variables
+        //initilize connection variables
         String sqlStatement;
         ArrayList<Recipe> RecipeList = new ArrayList<>();
 
@@ -155,8 +155,6 @@ public class Recipe {
                 int prot = rs.getInt("prot");
                 int fat = rs.getInt("fat");
                 String instruc = rs.getString("instructions");
-                
-                
                 
                 Recipe re = new Recipe(id, name, cat, serves, cals, carbs, prot, fat, instruc);
                 
@@ -217,7 +215,93 @@ public class Recipe {
         return outcome;
     }
 
+    public static int insertRecipe(String[] insertRecipe)
+    {
+        //initilize connection variables
+        //outcome is used rather than return in catch so that the connection is still
+        //closed by allowing the try to reach finally
+        String sqlStatement = "";
+        int outcome = 1;
+
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "insert into Recipe (name, category, instructions, servingsTotal, servingsRemain) values (?, ?, ?, ?, ?)";
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
+            pst.setString(1, String.valueOf(insertRecipe[0]));  
+            pst.setString(2, String.valueOf(insertRecipe[1])); 
+            pst.setString(3, String.valueOf(insertRecipe[2])); 
+            pst.setInt(4, Integer.valueOf(insertRecipe[3])); 
+            pst.setInt(5, 0); 
+
+            //execute the query
+            rs = (OracleResultSet) pst.executeQuery();
+            if(rs.next() == false)
+            {
+                outcome = 0;
+            }
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+        
+        return outcome;
+    }
+    
+    public static String getRecipeID(String recName, String recCat, String recInstr, String recServings)
+    {
+         //initilize connection variables
+        String sqlStatement;
+        String ID = "";
+
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "select * from recipe where name = ? and category = ? and instructions = ? and servingsTotal = ?";
+            
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
+            pst.setString(1, String.valueOf(recName));  
+            pst.setString(2, String.valueOf(recCat)); 
+            pst.setString(3, String.valueOf(recInstr)); 
+            pst.setInt(4, Integer.valueOf(recServings)); 
+
+            rs = (OracleResultSet) pst.executeQuery();
+            
+            //cycle through data from select statement
+            //create objects
+            //store in a list
+            //populate text field in corresponding jFrame tab
+            while(rs.next())
+            {
+                ID = rs.getString("recid");
+            }
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+        
+        return ID;
+    }
     
     // addIngredient
-    // removeIngredient
 }

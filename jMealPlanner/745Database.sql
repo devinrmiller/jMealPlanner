@@ -30,9 +30,9 @@ create table Food(
 
 create table MealPlan(
 	dayOfWeek number(10),
-	breakfast number(10) not null,																--breakfast, lunch and dinner refernce a recipe ID
-	lunch number(10) not null,
-	dinner number(10) not null
+	breakfast number(10),																--breakfast, lunch and dinner refernce a recipe ID
+	lunch number(10),
+	dinner number(10)
 );
 
 create table Ingredients(

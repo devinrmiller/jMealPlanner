@@ -274,5 +274,45 @@ public class Food {
         
         return outcome;
     }
+    
+    public static int updateFoodQuant(String passID, int quantityToUpdate)
+    {
+        //initilize connection variables
+        //outcome is used rather than return in catch so that the connection is still
+        //closed by allowing the try to reach finally
+        String sqlStatement = "";
+        int outcome = 1;
+
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "update food set quantity = ? where foodID = ?";
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
+            pst.setInt(1, quantityToUpdate);
+            pst.setInt(2, Integer.parseInt(passID));
+
+            //execute the query
+            rs = (OracleResultSet) pst.executeQuery();
+            if(rs.next() == false)
+            {
+                outcome = 0;
+            }
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+        
+        return outcome;
+    }
    
 }
