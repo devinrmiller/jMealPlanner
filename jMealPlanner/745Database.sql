@@ -9,8 +9,8 @@ drop table Ingredients cascade constraints;
 
 create table Recipe(
 	recID number(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
-	name char(50) not null,
-	category char(30) not null,
+	name varchar2(50) not null,
+	category varchar2(30) not null,
 	instructions varchar2(300) not null,
 	servingsTotal number not null,
 	servingsRemain number not null								
@@ -18,14 +18,14 @@ create table Recipe(
 
 create table Food(
 	foodID number(10) GENERATED ALWAYS as IDENTITY(START with 1 INCREMENT by 1),
-	groupType char(30) not null,
+	groupType varchar2(30) not null,
 	calories number not null,
 	carbs number not null,
 	protein number not null,
 	fat number not null,
 	name varchar2(30) not null,
 	quantity number not null,																	--quantity on hand
-	quantityMeasurement char(20) not null														--oz, grams, lbs, etc.
+	quantityMeasurement varchar2(20) not null														--oz, grams, lbs, etc.
 );																							
 
 create table MealPlan(
@@ -39,7 +39,7 @@ create table Ingredients(
 	recID number(10),
 	foodID number(10),
 	quantity number not null,																	--quantity on needed
-	quantityMeasurement char(20) not null														
+	quantityMeasurement varchar2(20) not null														
 );
 
 --build contraints for tables
@@ -52,9 +52,9 @@ alter table Recipe add (constraint servingsRemain check (servingsRemain >= 0));
 
 alter table Food add (constraint quantity check (quantity >= 0));
 
-alter table MealPlan add (constraint fk_breakfast foreign key (breakfast) references Recipe(recID) on delete cascade);
-alter table MealPlan add (constraint fk_lunch foreign key (lunch) references Recipe(recID) on delete cascade);
-alter table MealPlan add (constraint fk_dinner foreign key (dinner) references Recipe(recID) on delete cascade);
+alter table MealPlan add (constraint fk_breakfast foreign key (breakfast) references Recipe(recID) on delete set null);
+alter table MealPlan add (constraint fk_lunch foreign key (lunch) references Recipe(recID) on delete set null);
+alter table MealPlan add (constraint fk_dinner foreign key (dinner) references Recipe(recID) on delete set null);
 
 alter table Ingredients add (constraint fk_recipe_recID foreign key (recID) references Recipe(recID) on delete cascade);
 alter table Ingredients add (constraint fk_food_foodID foreign key (foodID) references Food(foodID) on delete cascade);

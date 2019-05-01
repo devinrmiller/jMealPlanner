@@ -258,11 +258,13 @@ public class Recipe {
         return outcome;
     }
     
-    public static String getRecipeID(String recName, String recCat, String recInstr, String recServings)
+    // addIngredient
+    public static void insertIngredient(int recipeID, int foodID, int foodQuant, String foodQuantMeasurement)
     {
-         //initilize connection variables
-        String sqlStatement;
-        String ID = "";
+        //initilize connection variables
+        //outcome is used rather than return in catch so that the connection is still
+        //closed by allowing the try to reach finally
+        String sqlStatement = "";
 
         //connect, calling our ConnectDb class
         conn = ConnectDb.setupConnection();
@@ -270,23 +272,58 @@ public class Recipe {
         //execute sql commands
         try 
         {
-            sqlStatement = "select * from recipe where name = ? and category = ? and instructions = ? and servingsTotal = ?";
+            sqlStatement = "insert into Ingredients (recID, foodID, quantity, quantityMeasurement) values (?, ?, ?, ?)";
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);              
+            pst.setInt(1, recipeID);                         
+            pst.setInt(2, foodID);                         
+            pst.setInt(3, foodQuant);
+            pst.setString(4, foodQuantMeasurement);
+
+            //execute the query
+            rs = (OracleResultSet) pst.executeQuery();
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+    }
+    
+    //get newly generate recipe ID
+    public static String getNewRecID(String recName, String recCat, String recInstructions, int recServings)
+    {
+        //initilize connection variables
+        String sqlStatement;
+        int recipeID = 0;
+
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "select * from recipe where (name = ? and category = ? and instructions = ? and servingsTotal = ?)";
             
             pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
-            pst.setString(1, String.valueOf(recName));  
-            pst.setString(2, String.valueOf(recCat)); 
-            pst.setString(3, String.valueOf(recInstr)); 
-            pst.setInt(4, Integer.valueOf(recServings)); 
+            pst.setString(1, recName);
+            pst.setString(2, recCat);
+            pst.setString(3, recInstructions);
+            pst.setInt(4, recServings);
 
             rs = (OracleResultSet) pst.executeQuery();
             
             //cycle through data from select statement
-            //create objects
-            //store in a list
-            //populate text field in corresponding jFrame tab
+            if (!rs.isBeforeFirst()) {
+                System.out.println("No data!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            }
             while(rs.next())
             {
-                ID = rs.getString("recid");
+                recipeID = rs.getInt("recID");
             }
         } 
         catch (Exception e) 
@@ -300,8 +337,6 @@ public class Recipe {
             ConnectDb.close(conn);
         }
         
-        return ID;
+        return String.valueOf(recipeID);
     }
-    
-    // addIngredient
 }

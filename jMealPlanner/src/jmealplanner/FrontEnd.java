@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import javax.swing.border.Border;
 
 public class FrontEnd extends JFrame {
     
@@ -30,6 +31,7 @@ public class FrontEnd extends JFrame {
     static ArrayList<Food> foodList; 
     static ArrayList<Recipe> recipeList;
     static ArrayList<MealPlan> mealList;
+    static int count = 0;
     
     /**
      * Creates new form FrontEnd
@@ -578,35 +580,88 @@ public class FrontEnd extends JFrame {
             
             @Override
             public void actionPerformed(ActionEvent e){
+                JScrollPane scroll1 = new JScrollPane();
+                JScrollPane scroll2 = new JScrollPane();
+                DefaultListModel dlm = new DefaultListModel();
+                
                 //variable declaration
                 JTextField recipeName = new JTextField();
                 JTextField recipeCategory = new JTextField();
-                JTextField recipeInstructions = new JTextField();
+                JTextArea recipeInstructions = new JTextArea(10,50);
                 JTextField recipeServings = new JTextField();
                 
                 JList recipeIngredients = new JList(jList3.getModel());
+                JTextField ingredientQuant = new JTextField();
+                JButton selectFood = new JButton("Add Ingredient");
+                JList recipeSelected = new JList();
                 
-                recipeIngredients.setSelectionModel(new DefaultListSelectionModel() {
-                    @Override
-                    public void setSelectionInterval(int index0, int index1) {
-                        if (super.isSelectedIndex(index0)) {
-                            super.removeSelectionInterval(index0, index1);
-                        } else {
-                            super.addSelectionInterval(index0, index1);
-                        }
-                    }
-                });
+                Food[] selectedFood = new Food[100];
+                int[] selectedFoodQuant = new int[100];
+                String[] selectedFoodQuantMeasurement = new String[100];
+                
+                //set custom Jlist properties
                 recipeIngredients.setLayoutOrientation(JList.VERTICAL);
+                recipeIngredients.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 recipeIngredients.setVisibleRowCount(5);
+                Dimension d1 = recipeIngredients.getPreferredSize();
+                d1.width = 500;
+                scroll1.setPreferredSize(d1);
+                scroll1.setViewportView(recipeIngredients);
+                
+                recipeSelected.setLayoutOrientation(JList.VERTICAL);
+                recipeSelected.setVisibleRowCount(10);
+                scroll2.setViewportView(recipeSelected);
+                
+                recipeInstructions.setLineWrap(true);
+                recipeInstructions.setWrapStyleWord(true);
+                Border border = BorderFactory.createLineBorder(Color.GRAY);
+                recipeInstructions.setBorder(BorderFactory.createCompoundBorder(border,
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)));
                 
                 Object[] recipeInfo ={
                     "Name: ", recipeName,
                     "Category: ", recipeCategory,
                     "Instructions: ", recipeInstructions,
                     "Servings: ", recipeServings,
-                    "Ingredients: ", recipeIngredients
+                    "Ingredients: ", scroll1,
+                    "Ingredient Quantity: ", ingredientQuant,
+                    "", selectFood,
+                    "Ingredients Selected: ", scroll2
                 };
 
+                selectFood.addActionListener(new ActionListener() 
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        if (ingredientQuant.getText().isEmpty()) 
+                        {
+                            JOptionPane.showMessageDialog(getParent(), "Quantity Must Not Be Empty!");
+                            return;
+                        }
+                        try 
+                        {
+                            Integer.parseInt(ingredientQuant.getText());
+                        } 
+                        catch (NumberFormatException er) 
+                        {
+                            JOptionPane.showMessageDialog(getParent(), "Quantity Must Be A Number!");
+                            return;
+                        }
+                        
+                        Food item = (Food) recipeIngredients.getSelectedValue();
+                        selectedFood[count] = item;
+                        selectedFoodQuant[count] = Integer.parseInt(ingredientQuant.getText());
+                        selectedFoodQuantMeasurement[count] = item.getQuantityMeasurment();
+                        count++;
+                        
+                        dlm.addElement(item);
+                        recipeSelected.setModel(dlm);
+                        
+                        ingredientQuant.setText("");
+                    }
+                });
+                
                 int option = JOptionPane.showConfirmDialog(getParent(), recipeInfo, "Enter Information for new Recipe", JOptionPane.OK_CANCEL_OPTION);
                 if(option == JOptionPane.OK_OPTION)
                 {
@@ -636,20 +691,10 @@ public class FrontEnd extends JFrame {
                     int[] selected = recipeIngredients.getSelectedIndices();
                     
                     //make sure at least one ingredient is selected
-                    if(recipeIngredients.getSelectedIndices().length == 0)
+                    if(selectedFood[0] == null)
                     {
                         JOptionPane.showMessageDialog(getParent(), "Recipe Must Have At Least One Ingredient!");
                         return;
-                    }
-                    
-                    Food[] tempArray = new Food[selected.length];
-                    String[] foodIDArray = new String[selected.length];
-                    
-                    //convert selected items full object to just the food id
-                    for (int i = 0; i < selected.length; i++) 
-                    {
-                        tempArray[i] = (Food) recipeIngredients.getModel().getElementAt(selected[i]);
-                        foodIDArray[i] = tempArray[i].getFoodID();
                     }
                     
                     //insert recipe into database
@@ -666,6 +711,15 @@ public class FrontEnd extends JFrame {
                     else if (confirmation == 1) 
                     {
                         //succeed
+                        String recipeIDToPass = Recipe.getNewRecID(recipeName.getText(), recipeCategory.getText(), recipeInstructions.getText(), Integer.parseInt(recipeServings.getText()));
+                        
+                        count = 0;
+                        int i = 0;
+                        while(selectedFood[i] != null)
+                        {
+                            Recipe.insertIngredient(Integer.parseInt(recipeIDToPass), Integer.parseInt(selectedFood[i].getFoodID()), selectedFoodQuant[i], selectedFoodQuantMeasurement[i]);
+                            i++;
+                        }
                         
                         //repopulate JList using existing query rather than
                         //creating new one to get the ID of newly entered food
@@ -675,9 +729,6 @@ public class FrontEnd extends JFrame {
                         recipeList = Recipe.initilizeRecipeList();
                         mealList = MealPlan.initilizeMealList();
                         
-                        String tempID = recipeList.get(recipeList.size()-1).getRecID();
-                        System.out.println(tempID);
-                            
                         populateMealPlan();
                         populateRecipe();
                         populateFridge();
@@ -899,8 +950,8 @@ public class FrontEnd extends JFrame {
         
         jList6.setModel(dlmInstruc);
         jList6.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        jList6.setLayoutOrientation(JList.HORIZONTAL_WRAP);
-        jList6.setVisibleRowCount(3);
+        jList6.setLayoutOrientation(JList.VERTICAL);
+        jList6.setVisibleRowCount(-1);
     }
     
     void populateMealPlan()
