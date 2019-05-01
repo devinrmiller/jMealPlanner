@@ -17,7 +17,7 @@ import oracle.jdbc.OracleResultSet;
  */
 public class Food {
     
-    private final String foodID;
+    private String foodID;
     private String category;
     private int calories;
     private int carbs;
@@ -45,6 +45,13 @@ public class Food {
         this.quantity = in_quantity;
         this.quantityMeasurement = in_quantityMeasurement;
         
+    }
+    
+    Food(String in_name, int in_quantity,String in_quantityMeasurement) 
+    {
+        this.name = in_name;
+        this.quantity = in_quantity;
+        this.quantityMeasurement = in_quantityMeasurement;
     }
     
     //getters
@@ -315,4 +322,162 @@ public class Food {
         return outcome;
     }
    
+    //generate all breakfast items for the week
+    public static ArrayList<Food> generateBreakList() 
+    {
+        //initilize connection variables
+        String sqlStatement = "";
+        ArrayList<Food> breakList = new ArrayList<Food>();
+
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "select Food.foodID, Food.Name as name, sum(Ingredients.quantity) as mealquant, Ingredients.quantityMeasurement as quantM\n"
+                    + "from mealPlan, Food, Ingredients\n"
+                    + "where Food.foodID = Ingredients.foodID and mealPlan.breakfast = Ingredients.recID\n"
+                    + "group by Food.name, Food.foodID, Ingredients.quantityMeasurement\n"
+                    + "order by Food.foodID";
+
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
+
+            rs = (OracleResultSet) pst.executeQuery();
+            
+            //cycle through data from select statement
+            //create objects
+            //store in a list
+            //populate text field in corresponding jFrame tab
+            while(rs.next())
+            {
+                String foodName = rs.getString("name");
+                int quant = rs.getInt("mealquant");
+                String quantMeasure = rs.getString("quantM");
+                
+                Food fd = new Food(foodName, quant, quantMeasure);
+                
+                //poplate arraylist with objects
+                breakList.add(fd);
+            }
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+        
+        return breakList;
+    }
+    
+    //generate all breakfast items for the week
+    public static ArrayList<Food> generateLunchList() 
+    {
+        //initilize connection variables
+        String sqlStatement = "";
+        ArrayList<Food> lunchList = new ArrayList<Food>();
+
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "select Food.foodID, Food.Name as name, sum(Ingredients.quantity) as mealquant, Ingredients.quantityMeasurement as quantM\n"
+                    + "from mealPlan, Food, Ingredients\n"
+                    + "where Food.foodID = Ingredients.foodID and mealPlan.lunch = Ingredients.recID\n"
+                    + "group by Food.name, Food.foodID, Ingredients.quantityMeasurement\n"
+                    + "order by Food.foodID";
+
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
+
+            rs = (OracleResultSet) pst.executeQuery();
+            
+            //cycle through data from select statement
+            //create objects
+            //store in a list
+            //populate text field in corresponding jFrame tab
+            while(rs.next())
+            {
+                String foodName = rs.getString("name");
+                int quant = rs.getInt("mealquant");
+                String quantMeasure = rs.getString("quantM");
+                
+                Food fd = new Food(foodName, quant, quantMeasure);
+                
+                //poplate arraylist with objects
+                lunchList.add(fd);
+            }
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+        
+        return lunchList;
+    }
+    
+    //generate all breakfast items for the week
+    public static ArrayList<Food> generateDinnerList() 
+    {
+        //initilize connection variables
+        String sqlStatement = "";
+        ArrayList<Food> dinnerList = new ArrayList<Food>();
+
+        //connect, calling our ConnectDb class
+        conn = ConnectDb.setupConnection();
+        
+        //execute sql commands
+        try 
+        {
+            sqlStatement = "select Food.foodID, Food.Name as name, sum(Ingredients.quantity) as mealquant, Ingredients.quantityMeasurement as quantM\n"
+                    + "from mealPlan, Food, Ingredients\n"
+                    + "where Food.foodID = Ingredients.foodID and mealPlan.dinner = Ingredients.recID\n"
+                    + "group by Food.name, Food.foodID, Ingredients.quantityMeasurement\n"
+                    + "order by Food.foodID";
+
+            pst = (OraclePreparedStatement) conn.prepareStatement(sqlStatement);
+
+            rs = (OracleResultSet) pst.executeQuery();
+            
+            //cycle through data from select statement
+            //create objects
+            //store in a list
+            //populate text field in corresponding jFrame tab
+            while(rs.next())
+            {
+                String foodName = rs.getString("name");
+                int quant = rs.getInt("mealquant");
+                String quantMeasure = rs.getString("quantM");
+                
+                Food fd = new Food(foodName, quant, quantMeasure);
+                
+                //poplate arraylist with objects
+                dinnerList.add(fd);
+            }
+        } 
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(null, e);
+        } 
+        finally 
+        {
+            ConnectDb.close(rs);
+            ConnectDb.close(pst);
+            ConnectDb.close(conn);
+        }
+        
+        return dinnerList;
+    }
 }

@@ -18,6 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.border.Border;
 
 public class FrontEnd extends JFrame {
@@ -29,6 +30,9 @@ public class FrontEnd extends JFrame {
     //custom variables
     static ArrayList<Food> fridge; 
     static ArrayList<Food> foodList; 
+    static ArrayList<Food> breakList; 
+    static ArrayList<Food> lunchList; 
+    static ArrayList<Food> dinnerList; 
     static ArrayList<Recipe> recipeList;
     static ArrayList<MealPlan> mealList;
     static int count = 0;
@@ -57,7 +61,10 @@ public class FrontEnd extends JFrame {
         
         //initial data load
         fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
-        foodList = Food.initilizeFoodList(5);                   //contains list of objects of all foods in database. including negative values
+        foodList = Food.initilizeFoodList(5);
+        breakList = Food.generateBreakList();
+        lunchList = Food.generateLunchList();
+        dinnerList = Food.generateDinnerList();
         recipeList = Recipe.initilizeRecipeList();
         mealList = MealPlan.initilizeMealList();
         
@@ -66,6 +73,7 @@ public class FrontEnd extends JFrame {
         populateFoodDict();
         populateRecipe();
         populateMealPlan();
+        populateShoppingList();
         
         //set the day of Meal Plan to Sunday on startup
         DefaultListModel modelToPass = (DefaultListModel) jList1.getModel();
@@ -118,15 +126,21 @@ public class FrontEnd extends JFrame {
                             //repopulate JList using existing query rather than
                             //creating new one to get the ID of newly entered food
                             //and creating an object to add
-                            fridge = Food.initilizeFoodList(0);
+                            //initial data load
+                            fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
                             foodList = Food.initilizeFoodList(5);
+                            breakList = Food.generateBreakList();
+                            lunchList = Food.generateLunchList();
+                            dinnerList = Food.generateDinnerList();
                             recipeList = Recipe.initilizeRecipeList();
                             mealList = MealPlan.initilizeMealList();
 
-                            populateMealPlan();
-                            populateRecipe();
+                            //initially load JLists with data from database
                             populateFridge();
                             populateFoodDict();
+                            populateRecipe();
+                            populateMealPlan();
+                            populateShoppingList();
                         }
                     }
                 }
@@ -245,15 +259,21 @@ public class FrontEnd extends JFrame {
                         //repopulate JList using existing query rather than
                         //creating new one to get the ID of newly entered food
                         //and creating an object to add
-                        fridge = Food.initilizeFoodList(0);
+                        //initial data load
+                        fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
                         foodList = Food.initilizeFoodList(5);
+                        breakList = Food.generateBreakList();
+                        lunchList = Food.generateLunchList();
+                        dinnerList = Food.generateDinnerList();
                         recipeList = Recipe.initilizeRecipeList();
                         mealList = MealPlan.initilizeMealList();
 
-                        populateMealPlan();
-                        populateRecipe();
+                        //initially load JLists with data from database
                         populateFridge();
                         populateFoodDict();
+                        populateRecipe();
+                        populateMealPlan();
+                        populateShoppingList();
                     }
                 }
             }
@@ -309,15 +329,21 @@ public class FrontEnd extends JFrame {
                             //repopulate JList using existing query rather than
                             //creating new one to get the ID of newly entered food
                             //and creating an object to add
-                            fridge = Food.initilizeFoodList(0);
+                            //initial data load
+                            fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
                             foodList = Food.initilizeFoodList(5);
+                            breakList = Food.generateBreakList();
+                            lunchList = Food.generateLunchList();
+                            dinnerList = Food.generateDinnerList();
                             recipeList = Recipe.initilizeRecipeList();
                             mealList = MealPlan.initilizeMealList();
 
-                            populateMealPlan();
-                            populateRecipe();
+                            //initially load JLists with data from database
                             populateFridge();
                             populateFoodDict();
+                            populateRecipe();
+                            populateMealPlan();
+                            populateShoppingList();
                         }
                     }
                     
@@ -390,15 +416,21 @@ public class FrontEnd extends JFrame {
                         //repopulate JList using existing query rather than
                         //creating new one to get the ID of newly entered food
                         //and creating an object to add
-                        fridge = Food.initilizeFoodList(0);                     
+                        //initial data load
+                        fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
                         foodList = Food.initilizeFoodList(5);
+                        breakList = Food.generateBreakList();
+                        lunchList = Food.generateLunchList();
+                        dinnerList = Food.generateDinnerList();
                         recipeList = Recipe.initilizeRecipeList();
                         mealList = MealPlan.initilizeMealList();
 
-                        populateMealPlan();
-                        populateRecipe();
+                        //initially load JLists with data from database
                         populateFridge();
                         populateFoodDict();
+                        populateRecipe();
+                        populateMealPlan();
+                        populateShoppingList();
                     }
                 }
             }
@@ -463,15 +495,21 @@ public class FrontEnd extends JFrame {
                             //repopulate JList using existing query rather than
                             //creating new one to get the ID of newly entered food
                             //and creating an object to add
-                            fridge = Food.initilizeFoodList(0);
+                            //initial data load
+                            fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
                             foodList = Food.initilizeFoodList(5);
+                            breakList = Food.generateBreakList();
+                            lunchList = Food.generateLunchList();
+                            dinnerList = Food.generateDinnerList();
                             recipeList = Recipe.initilizeRecipeList();
                             mealList = MealPlan.initilizeMealList();
 
-                            populateMealPlan();
-                            populateRecipe();
+                            //initially load JLists with data from database
                             populateFridge();
                             populateFoodDict();
+                            populateRecipe();
+                            populateMealPlan();
+                            populateShoppingList();
                         }
                     }
                     
@@ -557,15 +595,21 @@ public class FrontEnd extends JFrame {
                             //repopulate JList using existing query rather than
                             //creating new one to get the ID of newly entered food
                             //and creating an object to add
-                            fridge = Food.initilizeFoodList(0);
+                            //initial data load
+                            fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
                             foodList = Food.initilizeFoodList(5);
+                            breakList = Food.generateBreakList();
+                            lunchList = Food.generateLunchList();
+                            dinnerList = Food.generateDinnerList();
                             recipeList = Recipe.initilizeRecipeList();
                             mealList = MealPlan.initilizeMealList();
 
-                            populateMealPlan();
-                            populateRecipe();
+                            //initially load JLists with data from database
                             populateFridge();
                             populateFoodDict();
+                            populateRecipe();
+                            populateMealPlan();
+                            populateShoppingList();
                         }
                     }
                     
@@ -724,15 +768,21 @@ public class FrontEnd extends JFrame {
                         //repopulate JList using existing query rather than
                         //creating new one to get the ID of newly entered food
                         //and creating an object to add
-                        fridge = Food.initilizeFoodList(0);                     
+                        //initial data load
+                        fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
                         foodList = Food.initilizeFoodList(5);
+                        breakList = Food.generateBreakList();
+                        lunchList = Food.generateLunchList();
+                        dinnerList = Food.generateDinnerList();
                         recipeList = Recipe.initilizeRecipeList();
                         mealList = MealPlan.initilizeMealList();
-                        
-                        populateMealPlan();
-                        populateRecipe();
+
+                        //initially load JLists with data from database
                         populateFridge();
                         populateFoodDict();
+                        populateRecipe();
+                        populateMealPlan();
+                        populateShoppingList();
                         
                         JOptionPane.showMessageDialog(getParent(), "Recipe Added Successfully!");
                     }
@@ -812,16 +862,21 @@ public class FrontEnd extends JFrame {
 
                             //repopulate JList using existing query rather than
                             //creating new one to get the ID of newly entered food
-                            //and creating an object to add
-                            fridge = Food.initilizeFoodList(0);
+                            //initial data load
+                            fridge = Food.initilizeFoodList(0);                     //contains list of objects with foods of quantity >=0
                             foodList = Food.initilizeFoodList(5);
+                            breakList = Food.generateBreakList();
+                            lunchList = Food.generateLunchList();
+                            dinnerList = Food.generateDinnerList();
                             recipeList = Recipe.initilizeRecipeList();
                             mealList = MealPlan.initilizeMealList();
 
-                            populateMealPlan();
-                            populateRecipe();
+                            //initially load JLists with data from database
                             populateFridge();
                             populateFoodDict();
+                            populateRecipe();
+                            populateMealPlan();
+                            populateShoppingList();
                         }
                     }
                     
@@ -986,6 +1041,70 @@ public class FrontEnd extends JFrame {
         DefaultListModel modelToPass = (DefaultListModel) jList1.getModel();
         sortJListMealPlan(modelToPass, 1);
     }
+    
+    void populateShoppingList()
+    {
+        DefaultListModel dlm = new DefaultListModel();
+        
+        /*
+        *   Generate Shopping List here
+        */
+        Iterator<Food> iter1;
+        Iterator<Food> iter2;
+        for(iter1 = breakList.iterator(); iter1.hasNext();)
+        {
+            for(iter2 = lunchList.iterator(); iter2.hasNext();)
+            {
+                Food item1 = iter1.next();
+                Food item2 = iter2.next();
+                if(item1.getName().equals(item2.getName()))
+                {
+                    item1.setQuantity(item1.getQuantity() + item2.getQuantity());
+                }
+                else
+                {
+                    breakList.add(item2);
+                }
+            }
+        }
+        
+        for(iter1 = breakList.iterator(); iter1.hasNext();)
+        {
+            for(iter2 = dinnerList.iterator(); iter2.hasNext();)
+            {
+                Food item1 = iter1.next();
+                Food item2 = iter2.next();
+                if(item1.getName().equals(item2.getName()))
+                {
+                    item1.setQuantity(item1.getQuantity() + item2.getQuantity());
+                }
+                else
+                {
+                    breakList.add(item2);
+                }
+            }
+        }
+        
+        for(Food x: breakList)
+        {
+            for(Food y : fridge)
+            {
+                if(x.getName().equals(y.getName()))
+                {
+                    int check = y.getQuantity() - x.getQuantity();
+                    if(check < 0)
+                    {
+                        dlm.addElement(String.format("Name: %-40s Quantity Needed: %-20s", x.getName(), x.getQuantity()+x.getQuantityMeasurment()));
+                    }
+                }
+            }
+        }
+        
+        jList5.setModel(dlm);
+        jList5.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        jList5.setLayoutOrientation(JList.VERTICAL);
+        jList5.setVisibleRowCount(-1);
+    }
 
     /**
      * 
@@ -1040,13 +1159,6 @@ public class FrontEnd extends JFrame {
         jPanel4 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         jList5 = new javax.swing.JList<>();
-        jTextField31 = new javax.swing.JTextField();
-        jLabel39 = new javax.swing.JLabel();
-        jTextField32 = new javax.swing.JTextField();
-        jLabel40 = new javax.swing.JLabel();
-        jTextField33 = new javax.swing.JTextField();
-        jLabel41 = new javax.swing.JLabel();
-        jButton9 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jList4 = new javax.swing.JList();
@@ -1267,62 +1379,20 @@ public class FrontEnd extends JFrame {
         });
         jScrollPane5.setViewportView(jList5);
 
-        jTextField31.setColumns(5);
-
-        jLabel39.setText("Purchased:");
-
-        jTextField32.setColumns(5);
-
-        jLabel40.setText("Needed:");
-
-        jTextField33.setColumns(5);
-
-        jLabel41.setText("Owned:");
-
-        jButton9.setText("OK");
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane5)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel39)
-                            .addComponent(jLabel40)
-                            .addComponent(jLabel41))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextField32, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField33, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jTextField31, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton9)))
-                        .addGap(0, 850, Short.MAX_VALUE)))
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField33, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel41))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField32, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel40))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField31, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel39)
-                    .addComponent(jButton9))
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1560,7 +1630,6 @@ public class FrontEnd extends JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -1574,9 +1643,6 @@ public class FrontEnd extends JFrame {
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel39;
-    private javax.swing.JLabel jLabel40;
-    private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1610,9 +1676,6 @@ public class FrontEnd extends JFrame {
     private javax.swing.JTextField jTextField20;
     private javax.swing.JTextField jTextField21;
     private javax.swing.JTextField jTextField22;
-    private javax.swing.JTextField jTextField31;
-    private javax.swing.JTextField jTextField32;
-    private javax.swing.JTextField jTextField33;
     private javax.swing.JTextField jTextField5;
     private javax.swing.JTextField jTextField6;
     private javax.swing.JTextField jTextField7;
